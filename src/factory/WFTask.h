@@ -48,6 +48,17 @@ enum
 	WFT_STATE_ABORTED = CS_STATE_STOPPED		/* main process terminated */
 };
 
+
+/**
+ * 资源 CPU; 
+ * 调度单位 线程； 
+ * 任务名： WFThreadTask
+ * 底层操作资源的父类： CommRequest
+ * 调度者： 执行器与执行队列 
+ * 具体系统资源 pthread
+ * 
+ */ 
+ 
 template<class INPUT, class OUTPUT>
 class WFThreadTask : public ExecRequest
 {
@@ -216,6 +227,16 @@ protected:
 	}
 };
 
+
+/**
+ * 资源 网络; 
+ * 调度单位 socket fd； 
+ * 任务名： WFNetworkTask
+ * 底层操作资源的父类： ExecRequest
+ * 调度者： 通信器与连接管理 
+ * 具体系统资源 epoll/poll
+ * 
+ */ 
 template<class REQ, class RESP>
 class WFNetworkTask : public CommRequest
 {
@@ -335,6 +356,16 @@ protected:
 	virtual ~WFNetworkTask() { }
 };
 
+/**
+ * 资源 计时器; 
+ * 调度单位 时间； 
+ * 任务名： WFTimerTask
+ * 底层操作资源的父类： SleepRequest
+ * 调度者： 用一个timer_fd 管理 
+ * 具体系统资源 linux timer_fd
+ * 
+ */ 
+
 class WFTimerTask : public SleepRequest
 {
 public:
@@ -387,6 +418,16 @@ protected:
 	virtual ~WFTimerTask() { }
 };
 
+
+/**
+ * 资源 磁盘; 
+ * 调度单位 文件fd； 
+ * 任务名： WFFileTask
+ * 底层操作资源的父类： IORequest
+ * 调度者： IOServer
+ * 具体系统资源 linux aio
+ * 
+ */ 
 template<class ARGS>
 class WFFileTask : public IORequest
 {
@@ -458,6 +499,8 @@ protected:
 	virtual ~WFFileTask() { }
 };
 
+
+//底层操作资源的父类
 class WFGenericTask : public SubTask
 {
 public:
@@ -510,6 +553,16 @@ protected:
 	virtual ~WFGenericTask() { }
 };
 
+
+/**
+ * 资源 计数器; 
+ * 调度单位 一片用以做计数的内存； 
+ * 任务名： WFCounterTask					
+ * 底层操作资源的父类： WFGenericTask
+ * 调度者： 内存种管理所有conster task
+ * 具体系统资源 linux aio
+ * 
+ */ 
 class WFCounterTask : public WFGenericTask
 {
 public:
